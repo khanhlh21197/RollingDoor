@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:rollingdoor/Widget/bezierContainer.dart';
 import 'package:rollingdoor/helper/constants.dart';
 import 'package:rollingdoor/helper/loader.dart';
@@ -12,10 +14,8 @@ import 'package:rollingdoor/navigator.dart';
 import 'package:rollingdoor/response/LoginPostResponse.dart';
 import 'package:rollingdoor/response/LoginResponse.dart';
 import 'package:rollingdoor/singup/signup_http.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../helper/constants.dart' as Constants;
-import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class LoginPage extends StatefulWidget {
@@ -85,16 +85,16 @@ class _LoginPageState extends State<LoginPage> {
     var client = http.Client();
     try {
       var uriResponse = await client.post(
-          Uri.parse('http://103.146.23.146:8082/api/Accounts/login'),
-          headers: <String, String>{
-            'content-type': 'application/json; charset=utf-8',
-            // 'Authorization': 'Bearer ${Constants.token}',
-          },
-          body: loginPostResponseToJson(LoginPostResponse(
-              phoneNumber: _emailController.text,
-              password: _passwordController.text,
-              isRemember: true,
-          )),
+        Uri.parse('http://103.146.23.146:8082/api/Accounts/login'),
+        headers: <String, String>{
+          'content-type': 'application/json; charset=utf-8',
+          // 'Authorization': 'Bearer ${Constants.token}',
+        },
+        body: loginPostResponseToJson(LoginPostResponse(
+          phoneNumber: _emailController.text,
+          password: _passwordController.text,
+          isRemember: true,
+        )),
       );
       print('Response statuscode: ${uriResponse.statusCode}');
       print('Response body: ${uriResponse.body}');
@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
       var token = loginResponse.data.token;
 
       //save token to sharedPreferences
-      sharedPrefsHelper.addStringToSF("token", token);
+      sharedPrefsHelper.addStringToSF('token', token);
       print('_LoginPageState.token: $token');
 
       if (uriResponse.statusCode == 200) {
@@ -195,8 +195,7 @@ class _LoginPageState extends State<LoginPage> {
       await sharedPrefsHelper.addBoolToSF('login', true);
       navigatorPushAndRemoveUntil(
         context,
-        HomeScreen(
-        ),
+        HomeScreen(),
       );
     } else {
       this._showToast(context);

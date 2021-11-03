@@ -1,19 +1,14 @@
-
-
-
-
-
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:rollingdoor/addWidget/add_page.dart';
 import 'package:rollingdoor/helper/bottom_navigation_bar.dart';
 import 'package:rollingdoor/helper/constants.dart';
+import 'package:rollingdoor/helper/constants.dart' as Constants;
+import 'package:rollingdoor/helper/loader.dart';
 import 'package:rollingdoor/helper/shared_prefs_helper.dart';
 import 'package:rollingdoor/main/detail_screen.dart';
 import 'package:rollingdoor/main/user_profile_page.dart';
-import 'package:rollingdoor/rolling_door_remote.dart';
-import 'package:rollingdoor/helper/constants.dart' as Constants;
-
+import 'package:rollingdoor/response/GetDeviceResponse.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key, this.loginResponse, this.index}) : super(key: key);
@@ -33,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int quyen;
   SharedPrefsHelper sharedPrefsHelper;
 
+  var client = http.Client();
+
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = List();
@@ -42,8 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     sharedPrefsHelper = SharedPrefsHelper();
+
+    //khanhlh
+    getDevices();
+
     // initBottomBarItems(loginResponse['quyen']);
-     initBottomBarItems(1);
+    initBottomBarItems(1);
 
     // initWidgetOptions(loginResponse['quyen']);
     initWidgetOptions(1);
@@ -55,6 +56,34 @@ class _HomeScreenState extends State<HomeScreen> {
     // }
     // getPermission();
     super.initState();
+  }
+
+  Future getDevices() async {
+    String token = sharedPrefsHelper.getStringValuesSF('token');
+    final response = await client.get(
+        'http://103.146.23.146:8082/api/Devices/get-all-devices',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
+    print('Token : ${token}');
+
+    print('device response: $response');
+
+    if (response.statusCode == "200") {
+      var deviceResponse = getDeviceResponseFromJson(response.body);
+
+      var devices = deviceResponse.data;
+
+      print('$devices');
+    } else {
+      this._showToast(context, response.statusCode);
+    }
+  }
+
+  void _showToast(BuildContext context, message) {
+    Dialogs.showAlertDialog(context, 'message');
   }
 
   void getPermission() async {
@@ -145,8 +174,8 @@ class _HomeScreenState extends State<HomeScreen> {
           DetailScreen(),
           AddScreen(),
           UserProfilePage(
-            // switchValue: false,
-          ),
+              // switchValue: false,
+              ),
         ];
         break;
       case 2:

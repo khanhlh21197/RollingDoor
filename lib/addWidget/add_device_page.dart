@@ -8,7 +8,7 @@ import 'package:rollingdoor/helper/models.dart';
 import 'package:rollingdoor/helper/shared_prefs_helper.dart';
 import 'package:rollingdoor/model/door.dart';
 // import 'package:rollingdoor/request/DeviceRequest.dart';
-import 'package:rollingdoor/response/DeviceResponse.dart';
+import 'package:rollingdoor/response/CreateDeviceResponse.dart';
 import 'package:rollingdoor/response/door_response.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 
